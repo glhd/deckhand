@@ -136,7 +136,7 @@ RUN wget -O redis.tar.gz "http://download.redis.io/releases/redis-$REDIS_VERSION
 	sed -ri 's!^(#define CONFIG_DEFAULT_PROTECTED_MODE) 1$!\1 0!' /usr/src/redis/src/server.h; \
 	grep -q '^#define CONFIG_DEFAULT_PROTECTED_MODE 0$' /usr/src/redis/src/server.h; \
 	make -C /usr/src/redis -j "$(nproc)"; \
-	make -C /usr/src/redis install;
+	make -C /usr/src/redis install; \
 	serverMd5="$(md5sum /usr/local/bin/redis-server | cut -d' ' -f1)"; export serverMd5; \
 	find /usr/local/bin/redis* -maxdepth 0 \
 		-type f -not -name redis-server \
