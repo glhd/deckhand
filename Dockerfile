@@ -1,4 +1,4 @@
-FROM php:7.4-alpine
+FROM php:8.0-alpine
 
 MAINTAINER Chris Morrell
 
@@ -7,8 +7,9 @@ ENV DOCKERIZE_VERSION=v0.6.1 \
 	PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 RUN mkdir -p ~/Downloads /app \
-	&& apk upgrade \
-	&& apk add --no-cache \
+	&& apk upgrade
+	
+RUN apk add --no-cache \
 		bash \
 		git \
 		openssl \
@@ -30,8 +31,9 @@ RUN mkdir -p ~/Downloads /app \
 		icu-dev \
 		zlib-dev \
 		libzip-dev \
-		sqlite \
-	&& apk add --no-cache --virtual .build-deps \
+		sqlite
+
+RUN apk add --no-cache --virtual .build-deps \
 		libpng-dev \
 		freetype-dev \
 		libjpeg-turbo-dev \
@@ -50,8 +52,17 @@ RUN mkdir -p ~/Downloads /app \
 		linux-headers \
 		python3 \
 		imagemagick-dev \
-		libtool \
-	&& docker-php-ext-configure intl \
+		libtool
+		
+RUN git clone https://github.com/Imagick/imagick.git imagick-src \
+	&& cd imagick-src \
+	&& ls -lh \
+	&& phpize \
+	&& ./configure --without-perl --disable-docs \
+	&& make install -j$(nproc) \
+	&& cd ..
+		
+RUN docker-php-ext-configure intl \
 	&& docker-php-ext-install -j$(nproc) intl \
 	&& docker-php-ext-install -j$(nproc) zip \
 	&& docker-php-ext-install -j$(nproc) pdo_mysql \
@@ -63,18 +74,21 @@ RUN mkdir -p ~/Downloads /app \
 	&& docker-php-ext-install -j$(nproc) gd \
 	&& docker-php-ext-install -j$(nproc) exif \
 	&& pecl install xdebug \
-	&& pecl install imagick \
-	&& pecl install redis \
-	&& docker-php-ext-enable imagick \
-	&& docker-php-ext-enable redis \
-	&& php -r "copy('https://raw.githubusercontent.com/composer/getcomposer.org/master/web/installer', 'composer-setup.php');" \
+	&& pecl install redis
+	
+RUN docker-php-ext-enable imagick \
+	&& docker-php-ext-enable redis
+
+RUN php -r "copy('https://raw.githubusercontent.com/composer/getcomposer.org/master/web/installer', 'composer-setup.php');" \
 	&& php composer-setup.php \
 	&& php -r "unlink('composer-setup.php');" \
-	&& mv composer.phar /usr/local/bin/composer \
-	&& wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+	&& mv composer.phar /usr/local/bin/composer
+	
+RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
 	&& tar -C /usr/local/bin -xzvf dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
 	&& rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
 	&& apk del .build-deps \
+	&& rm -rf imagick-src \
 	&& rm -rf tmp/*
 
 # And we're set
