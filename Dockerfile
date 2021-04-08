@@ -18,6 +18,7 @@ RUN addgroup -g 1000 deckhand \
 
 RUN apk upgrade
 RUN apk add --no-cache \
+	bash \
 	git \
 	openssl \
 	libpng \
@@ -64,20 +65,23 @@ RUN apk add --no-cache --virtual .build-deps \
 # Configure PHP (extensions & composer)
 
 RUN docker-php-ext-configure intl \
-	&& docker-php-ext-install intl \
-	&& docker-php-ext-install zip \
-	&& docker-php-ext-install pdo_mysql \
+	&& docker-php-ext-install -j$(nproc) intl \
+	&& docker-php-ext-install -j$(nproc) zip \
+	&& docker-php-ext-install -j$(nproc) pdo_mysql \
+	&& docker-php-ext-install -j$(nproc) bcmath \
 	&& docker-php-ext-configure gd \
 		--enable-gd \
         --with-jpeg \
         --with-freetype \
-	&& docker-php-ext-install gd \
-	&& docker-php-ext-install exif \
+	&& docker-php-ext-install -j$(nproc) gd \
+	&& docker-php-ext-install -j$(nproc) exif \
 	&& pecl install xdebug \
 	&& pecl install imagick \
+	&& pecl install redis \
 	&& pecl install pcov
 
 RUN docker-php-ext-enable imagick \
+	&& docker-php-ext-enable redis \
 	&& docker-php-ext-enable pcov \
 	&& php -r "copy('https://raw.githubusercontent.com/composer/getcomposer.org/master/web/installer', 'composer-setup.php');" \
 	&& php composer-setup.php \
