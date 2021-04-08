@@ -6,40 +6,32 @@ ENV DOCKERIZE_VERSION=v0.6.1 \
 	PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 	PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
-# Set up user
-
-RUN addgroup -g 1000 deckhand \
-	&& adduser -u 1000 -G deckhand -s /bin/sh -D deckhand \
-	&& mkdir -p /home/deckhand/Downloads /app \
-	&& chown -R deckhand:deckhand /home/deckhand \
-    && chown -R deckhand:deckhand /app
-
-# Install base packages
-
-RUN apk upgrade
-RUN apk add --no-cache \
-	bash \
-	git \
-	openssl \
-	libpng \
-	freetype \
-	ttf-freefont \
-	libjpeg-turbo \
-	mysql-client \
-	libstdc++ \
-	chromium \
-	nss \
-	harfbuzz \
-	nodejs \
-	yarn \
-	npm \
-	imagemagick \
-	curl \
-	tar \
-	icu-dev \
-	zlib-dev \
-	libzip-dev \
-	sqlite
+# Base setup
+RUN mkdir -p ~/Downloads /app \
+	&& apk upgrade \
+	&& apk add --no-cache \
+		bash \
+		git \
+		openssl \
+		libpng \
+		freetype \
+		ttf-freefont \
+		libjpeg-turbo \
+		mysql-client \
+		libstdc++ \
+		chromium \
+		nss \
+		harfbuzz \
+		nodejs \
+		yarn \
+		npm \
+		imagemagick \
+		curl \
+		tar \
+		icu-dev \
+		zlib-dev \
+		libzip-dev \
+		sqlite
 
 RUN apk add --no-cache --virtual .build-deps \
 	libpng-dev \
@@ -63,7 +55,6 @@ RUN apk add --no-cache --virtual .build-deps \
 	libtool
 
 # Configure PHP (extensions & composer)
-
 RUN docker-php-ext-configure intl \
 	&& docker-php-ext-install -j$(nproc) intl \
 	&& docker-php-ext-install -j$(nproc) zip \
@@ -89,19 +80,12 @@ RUN docker-php-ext-enable imagick \
 	&& mv composer.phar /usr/local/bin/composer
 
 # Install dockerize
-
 RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
 	&& tar -C /usr/local/bin -xzvf dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
 	&& rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 # Clean up packages only needed a build time
-
 RUN apk del .build-deps && rm -rf tmp/*
 
-# Switch to our local user
-
-USER deckhand
-
 # And we're set
-
-CMD ["/bin/sh"]
+CMD ["/bin/bash"]
