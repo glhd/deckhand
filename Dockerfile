@@ -56,6 +56,7 @@ RUN mkdir -p ~/Downloads /app \
 		libtool \
     # Configure PHP extensions
 	&& docker-php-ext-configure intl \
+	&& docker-php-ext-configure pcntl --enable-pcntl \
 	&& docker-php-ext-install -j$(nproc) intl \
 	&& docker-php-ext-install -j$(nproc) zip \
 	&& docker-php-ext-install -j$(nproc) pdo_mysql \
@@ -66,6 +67,7 @@ RUN mkdir -p ~/Downloads /app \
 		--with-freetype \
 	&& docker-php-ext-install -j$(nproc) gd \
 	&& docker-php-ext-install -j$(nproc) exif \
+	&& docker-php-ext-install -j$(nproc) pcntl \
 	&& pecl install xdebug \
 	&& pecl install imagick \
 	&& pecl install redis \

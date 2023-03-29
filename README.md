@@ -3,7 +3,11 @@ Base docker image for Laravel CI
 
 To build current version for local testing:
 
+    # On an Intel chip:
     docker build -t glhd/deckhand:dev .
+    
+    # On a Mac M-series chip:
+    docker buildx build --platform linux/amd64 -t glhd/deckhand:dev .
 
 To run the current build:
 
