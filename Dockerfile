@@ -68,6 +68,7 @@ RUN mkdir -p ~/Downloads /app \
 	&& docker-php-ext-install -j$(nproc) gd \
 	&& docker-php-ext-install -j$(nproc) exif \
 	&& docker-php-ext-install -j$(nproc) pcntl \
+	&& docker-php-ext-install -j$(nproc) sockets \
 	&& pecl install xdebug \
 	&& pecl install imagick \
 	&& pecl install redis \
