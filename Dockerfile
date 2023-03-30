@@ -54,6 +54,8 @@ RUN mkdir -p ~/Downloads /app \
 		python3 \
 		imagemagick-dev \
 		libtool \
+    # Use the default development php.ini file
+    && mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini" \
     # Configure PHP extensions
 	&& docker-php-ext-configure intl \
 	&& docker-php-ext-configure pcntl --enable-pcntl \
