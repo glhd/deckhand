@@ -21,6 +21,7 @@ RUN mkdir -p ~/Downloads /app \
 		mysql-client \
 		libstdc++ \
 		chromium \
+		chromium-chromedriver \
 		nss \
 		harfbuzz \
 		nodejs \
