@@ -13,6 +13,6 @@ To run the current build:
 
      docker run --rm -it glhd/deckhand:dev bash
 
-To push and tag the current local dev build (change `8.1` to the current release tag):
+To push and tag the current local dev build (change `8.2` to the current release tag):
 
-    docker tag glhd/deckhand:dev glhd/deckhand:8.1 && docker push glhd/deckhand:8.1
+    docker tag glhd/deckhand:dev glhd/deckhand:8.2 && docker push glhd/deckhand:8.2
