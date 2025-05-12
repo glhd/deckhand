@@ -1,6 +1,6 @@
 FROM php:8.3-alpine
 
-MAINTAINER Chris Morrell
+LABEL org.opencontainers.image.authors="Chris Morrell"
 
 ENV DOCKERIZE_VERSION=v0.6.1 \
 	PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
@@ -55,6 +55,7 @@ RUN mkdir -p ~/Downloads /app \
 		python3 \
 		imagemagick-dev \
 		libtool \
+		gmp-dev \
     # Use the default development php.ini file
     && mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini" \
     # Configure PHP extensions
@@ -72,6 +73,7 @@ RUN mkdir -p ~/Downloads /app \
 	&& docker-php-ext-install -j$(nproc) exif \
 	&& docker-php-ext-install -j$(nproc) pcntl \
 	&& docker-php-ext-install -j$(nproc) sockets \
+	&& docker-php-ext-install -j$(nproc) gmp \
 	&& pecl install xdebug \
 	&& pecl install imagick \
 	&& pecl install redis \
