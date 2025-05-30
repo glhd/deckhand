@@ -19,6 +19,7 @@ RUN mkdir -p ~/Downloads /app \
 		ttf-freefont \
 		libjpeg-turbo \
 		mysql-client \
+		mariadb-connector-c \
 		libstdc++ \
 		chromium \
 		chromium-chromedriver \
